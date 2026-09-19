@@ -1,0 +1,842 @@
+<!DOCTYPE html>
+<html lang="pt-AO">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Viral Angola — O que está a bombar</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#0B0F0D">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Viral Angola">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="icon" href="icons/icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/JsBarcode/3.11.5/JsBarcode.all.min.js"></script>
+<style>
+:root{
+  --bg:#0B0F0D; --surface:#151B17; --surface-2:#1E2620; --line:#2A332C;
+  --ink:#F5F1E8; --dim:#9CA59B;
+  --red:#D93A3A; --gold:#E7B23E; --teal:#2FA37D; --violet:#7C8CFF;
+  --font-display:"Archivo Black", "Arial Black", sans-serif;
+  --font-body:"Inter", -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: light){
+  :root:not([data-theme="dark"]){
+    --bg:#0B0F0D; --surface:#151B17; --surface-2:#1E2620; --ink:#F5F1E8; --dim:#9CA59B;
+  }
+}
+*{box-sizing:border-box}
+html{scroll-padding-top:96px}
+html,body{height:100%}
+body{
+  margin:0; background:var(--bg); color:var(--ink); font-family:var(--font-body);
+  line-height:1.5; -webkit-font-smoothing:antialiased;
+}
+img,svg{max-width:100%}
+a{color:inherit}
+button{font-family:inherit}
+.wrap{max-width:1180px; margin:0 auto; padding:0 18px}
+
+/* ---- Masthead ---- */
+header.masthead{
+  position:sticky; top:0; z-index:40; background:var(--bg);
+  border-bottom:1px solid var(--line);
+  padding-top:env(safe-area-inset-top,0px);
+}
+.masthead-top{display:flex; align-items:center; justify-content:space-between; padding:14px 18px; max-width:1180px; margin:0 auto;}
+.logo{font-family:var(--font-display); font-size:22px; letter-spacing:-0.5px; display:flex; align-items:center; gap:8px;}
+.logo .dot{width:9px;height:9px;border-radius:50%;background:var(--red); box-shadow:0 0 0 3px rgba(217,58,58,.25);}
+.logo b{color:var(--gold)}
+.masthead-meta{font-size:12px; color:var(--dim)}
+
+.ticker{
+  background:var(--red); color:#fff; overflow:hidden; white-space:nowrap; position:relative;
+  border-bottom:1px solid #00000030;
+}
+.ticker .ticker-label{
+  position:absolute; left:0; top:0; bottom:0; display:flex; align-items:center;
+  background:#B32C2C; padding:0 12px; font-weight:800; font-size:12px; z-index:2;
+}
+.ticker-track{display:flex; gap:60px; padding:8px 0 8px 140px; animation:scrollTicker 32s linear infinite; width:max-content;}
+.ticker-track span{font-size:13px; font-weight:600}
+@keyframes scrollTicker{from{transform:translateX(0)} to{transform:translateX(-50%)}}
+@media (prefers-reduced-motion: reduce){ .ticker-track{animation:none; overflow-x:auto} }
+
+nav.tabs{
+  display:flex; gap:4px; overflow-x:auto; padding:10px 18px; max-width:1180px; margin:0 auto;
+  scrollbar-width:none;
+}
+nav.tabs::-webkit-scrollbar{display:none}
+nav.tabs button{
+  flex:0 0 auto; background:none; border:1px solid var(--line); color:var(--dim);
+  padding:8px 14px; border-radius:999px; font-size:13px; font-weight:600; cursor:pointer;
+  transition:background .15s, color .15s, border-color .15s;
+}
+nav.tabs button:hover{color:var(--ink); border-color:var(--dim)}
+nav.tabs button.active{background:var(--ink); color:var(--bg); border-color:var(--ink)}
+
+/* ---- Sections ---- */
+main{padding:28px 0 60px}
+section.view{display:none}
+section.view.active{display:block; animation:fadeIn .25s ease}
+@keyframes fadeIn{from{opacity:0; transform:translateY(6px)} to{opacity:1; transform:none}}
+
+.section-head{display:flex; align-items:baseline; justify-content:space-between; margin-bottom:16px; gap:12px; flex-wrap:wrap}
+.section-head h1{font-family:var(--font-display); font-size:clamp(24px,4vw,34px); margin:0; letter-spacing:-0.5px;}
+.section-head p{color:var(--dim); font-size:14px; margin:4px 0 0}
+
+.grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:16px;}
+
+.card{
+  background:var(--surface); border:1px solid var(--line); border-radius:10px; overflow:hidden;
+  display:flex; flex-direction:column; transition:border-color .15s, transform .15s;
+}
+.card:hover{border-color:var(--dim)}
+.card .thumb{
+  height:120px; display:flex; align-items:center; justify-content:center; font-size:40px;
+}
+.card .body{padding:14px 16px 16px; display:flex; flex-direction:column; gap:8px; flex:1}
+.tag{
+  align-self:flex-start; font-size:11px; font-weight:800; padding:3px 9px; border-radius:5px;
+  color:#0B0F0D;
+}
+.card h3{font-size:16px; margin:0; line-height:1.35}
+.card .meta{font-size:12px; color:var(--dim); margin-top:auto; padding-top:6px; border-top:1px solid var(--line)}
+
+.tag.agora{background:var(--red); color:#fff}
+.tag.angola{background:var(--gold)}
+.tag.desporto{background:var(--teal); color:#fff}
+.tag.tecnologia{background:var(--violet); color:#fff}
+.tag.oportunidades{background:var(--gold)}
+
+/* hero big story on AGORA */
+.hero-story{
+  display:grid; grid-template-columns:1.3fr 1fr; gap:0; background:var(--surface);
+  border:1px solid var(--line); border-radius:12px; overflow:hidden; margin-bottom:22px;
+}
+.hero-story .thumb{height:220px; font-size:64px}
+.hero-story .body{padding:22px}
+.hero-story h2{font-family:var(--font-display); font-size:clamp(20px,3vw,28px); margin:6px 0 10px; line-height:1.2}
+@media (max-width:700px){ .hero-story{grid-template-columns:1fr} }
+
+/* ---- Tools grid ---- */
+.tool-card{cursor:pointer; text-align:left}
+.tool-card .thumb{background:var(--surface-2); font-size:34px}
+.tool-card:hover{transform:translateY(-2px)}
+
+/* ---- Modal ---- */
+.modal-overlay{
+  position:fixed; inset:0; background:rgba(0,0,0,.6); z-index:100; display:none;
+  align-items:flex-start; justify-content:center; padding:30px 16px; overflow-y:auto;
+}
+.modal-overlay.open{display:flex}
+.modal{
+  background:var(--surface); border:1px solid var(--line); border-radius:12px; max-width:520px; width:100%;
+  padding:22px; margin-top:10px;
+}
+.modal h2{font-family:var(--font-display); font-size:20px; margin:0 0 14px}
+.modal label{display:block; font-size:12px; color:var(--dim); margin:12px 0 5px; font-weight:600}
+.modal input, .modal select, .modal textarea{
+  width:100%; background:var(--surface-2); border:1px solid var(--line); color:var(--ink);
+  padding:10px 12px; border-radius:7px; font-size:14px; font-family:inherit;
+}
+.modal textarea{resize:vertical; min-height:70px}
+.row2{display:grid; grid-template-columns:1fr 1fr; gap:10px}
+.modal .actions{display:flex; gap:10px; margin-top:18px; flex-wrap:wrap}
+.btn{
+  background:var(--gold); color:#0B0F0D; border:none; padding:10px 18px; border-radius:7px;
+  font-weight:700; cursor:pointer; font-size:14px;
+}
+.btn.secondary{background:var(--surface-2); color:var(--ink); border:1px solid var(--line)}
+.btn:active{transform:scale(.98)}
+.close-x{
+  position:absolute; top:16px; right:16px; background:none; border:none; color:var(--dim);
+  font-size:20px; cursor:pointer; line-height:1;
+}
+.modal{position:relative}
+.result-box{
+  margin-top:16px; background:var(--surface-2); border:1px solid var(--line); border-radius:8px;
+  padding:14px; font-size:14px; white-space:pre-wrap;
+}
+.result-box strong{color:var(--gold)}
+#qrOut, #barOut{display:flex; justify-content:center; margin-top:14px; background:#fff; padding:12px; border-radius:8px}
+
+footer{border-top:1px solid var(--line); padding:26px 0 50px; text-align:center; color:var(--dim); font-size:12px}
+footer b{color:var(--ink)}
+.note{font-size:11px; color:var(--dim); margin-top:10px}
+</style>
+</head>
+<body>
+
+<header class="masthead">
+  <div class="masthead-top">
+    <div class="logo"><span class="dot"></span>VIRAL <b>ANGOLA</b></div>
+    <div style="display:flex; align-items:center; gap:12px">
+      <button id="installBtn" class="btn secondary" style="display:none; padding:6px 12px; font-size:12px;" onclick="instalarApp()">⬇ Instalar app</button>
+      <div class="masthead-meta" id="clock">Luanda</div>
+    </div>
+  </div>
+  <div class="ticker">
+    <div class="ticker-label">🔥 AGORA</div>
+    <div class="ticker-track" id="tickerTrack"></div>
+  </div>
+  <nav class="tabs" id="tabs"></nav>
+</header>
+
+<main class="wrap">
+  <section class="view" id="view-agora">
+    <div class="section-head">
+      <div><h1>O que está a bombar</h1><p>Atualizado várias vezes por dia — viral, curiosidades, desporto e tecnologia.</p></div>
+    </div>
+    <div id="agoraHero"></div>
+    <div class="grid" id="agoraGrid"></div>
+  </section>
+
+  <section class="view" id="view-angola">
+    <div class="section-head"><div><h1>🇦🇴 Angola</h1><p>Notícias, economia, emprego, concursos, educação e negócios.</p></div></div>
+    <div class="grid" id="angolaGrid"></div>
+  </section>
+
+  <section class="view" id="view-desporto">
+    <div class="section-head"><div><h1>⚽ Desporto</h1><p>Girabola, Seleção Nacional e as principais ligas do mundo.</p></div></div>
+    <div class="grid" id="desportoGrid"></div>
+  </section>
+
+  <section class="view" id="view-tecnologia">
+    <div class="section-head"><div><h1>🤖 Tecnologia & IA</h1><p>Ferramentas de IA, apps, redes sociais e tutoriais.</p></div></div>
+    <div class="grid" id="tecnologiaGrid"></div>
+  </section>
+
+  <section class="view" id="view-oportunidades">
+    <div class="section-head"><div><h1>💰 Oportunidades</h1><p>Empregos, bolsas, cursos gratuitos e concursos — em Angola e no exterior.</p></div></div>
+    <div class="grid" id="oportunidadesGrid"></div>
+  </section>
+
+  <section class="view" id="view-ferramentas">
+    <div class="section-head"><div><h1>🧮 Ferramentas gratuitas</h1><p>Toca numa ferramenta para a usar — tudo funciona diretamente no teu telemóvel ou computador.</p></div></div>
+    <div class="grid" id="toolsGrid"></div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <b>Viral Angola</b> — protótipo funcional do portal.<br>
+    Todo o conteúdo das secções de notícias é <b>ilustrativo</b> (dados de exemplo); as ferramentas abaixo funcionam de verdade.
+  </div>
+</footer>
+
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal" id="modalBox"></div>
+</div>
+
+<script>
+/* ================= DATA ================= */
+const CATEGORIES = [
+  {id:"agora", label:"🔥 AGORA"},
+  {id:"angola", label:"🇦🇴 Angola"},
+  {id:"desporto", label:"⚽ Desporto"},
+  {id:"tecnologia", label:"🤖 Tecnologia & IA"},
+  {id:"oportunidades", label:"💰 Oportunidades"},
+  {id:"ferramentas", label:"🧮 Ferramentas"},
+];
+
+const tickerItems = [
+  "Vídeo de festa tradicional em Luanda ultrapassa 500 mil visualizações",
+  "Angolano cria negócio online usando inteligência artificial",
+  "Craque africano é destaque em jornais europeus esta semana",
+  "Nova ferramenta de IA gera currículos em segundos",
+  "Governo anuncia novo concurso público — inscrições abertas",
+  "Você sabia? Angola tem uma das maiores reservas de diamantes do mundo",
+  "Girabola: resultados da última jornada agitam as redes sociais",
+];
+
+const agoraStories = [
+  {tag:"VIRAL", emoji:"📱", title:"Vídeo de rua em Luanda com dança viral já passa de meio milhão de views", meta:"Redes sociais · há 2h"},
+  {tag:"CURIOSIDADE", emoji:"💡", title:"Você sabia? O quimbundo tem palavras que já entraram no português falado no Brasil", meta:"Curiosidades · há 4h"},
+  {tag:"DESPORTO", emoji:"⚽", title:"Craque africano chama atenção de clubes europeus na pré-época", meta:"Desporto · há 5h"},
+  {tag:"TECNOLOGIA", emoji:"🤖", title:"Nova ferramenta de IA resume documentos longos em poucos segundos", meta:"Tecnologia · há 6h"},
+  {tag:"VIRAL", emoji:"😂", title:"Piada sobre trânsito em Luanda vira meme nacional em poucas horas", meta:"Redes sociais · há 7h"},
+  {tag:"CURIOSIDADE", emoji:"🌍", title:"Cinco factos pouco conhecidos sobre a Muxima e o rio Kwanza", meta:"Curiosidades · há 9h"},
+];
+
+const angolaStories = [
+  {emoji:"📰", title:"Resumo do dia: as notícias mais importantes de Angola em 5 minutos"},
+  {emoji:"📈", title:"Economia: como está o câmbio do Kwanza esta semana"},
+  {emoji:"💼", title:"Emprego: vagas abertas em empresas privadas em Luanda e Benguela"},
+  {emoji:"📋", title:"Concursos públicos: veja os prazos de inscrição em aberto"},
+  {emoji:"🎓", title:"Educação: novidades sobre o ano letivo e exames nacionais"},
+  {emoji:"🚀", title:"Negócios: jovens angolanos que estão a empreender online"},
+];
+
+const desportoStories = [
+  {emoji:"🏆", title:"Girabola: classificação atualizada após a última jornada"},
+  {emoji:"🇦🇴", title:"Seleção Nacional: convocatória e próximos jogos"},
+  {emoji:"🌍", title:"Futebol africano: os resultados que marcaram a semana"},
+  {emoji:"🏅", title:"Champions League: resumo dos jogos da semana"},
+  {emoji:"⚽", title:"Premier League e La Liga: tabelas atualizadas"},
+  {emoji:"🔄", title:"Mercado de transferências: os rumores mais quentes"},
+];
+
+const tecnologiaStories = [
+  {emoji:"🧠", title:"5 ferramentas de inteligência artificial para usar hoje mesmo"},
+  {emoji:"📱", title:"Melhores aplicativos do momento para Android e iPhone"},
+  {emoji:"💬", title:"Truques do WhatsApp que poucas pessoas conhecem"},
+  {emoji:"🎵", title:"TikTok: como funciona o algoritmo em 2026"},
+  {emoji:"▶️", title:"YouTube: como começar um canal do zero"},
+  {emoji:"🤖", title:"ChatGPT: guia rápido para iniciantes"},
+];
+
+const oportunidadesStories = [
+  {emoji:"💼", title:"Vagas de emprego abertas esta semana em Angola"},
+  {emoji:"🎓", title:"Bolsas de estudo internacionais com inscrições abertas"},
+  {emoji:"📚", title:"Cursos gratuitos online com certificado"},
+  {emoji:"📋", title:"Concursos públicos com vagas disponíveis"},
+  {emoji:"🚀", title:"Programas de apoio a jovens empreendedores"},
+  {emoji:"🌍", title:"Trabalho remoto: oportunidades para trabalhar do exterior"},
+];
+
+const tools = [
+  {id:"salario", emoji:"💵", title:"Calculadora de salário", desc:"Estima o salário líquido a partir do bruto"},
+  {id:"percentagem", emoji:"%", title:"Calculadora de percentagem", desc:"Calcula percentagens de forma rápida"},
+  {id:"moeda", emoji:"💱", title:"Conversor Kz / USD / EUR", desc:"Converte entre Kwanza, Dólar e Euro"},
+  {id:"idade", emoji:"🎂", title:"Calculadora de idade", desc:"Calcula idade exata a partir da data de nascimento"},
+  {id:"juros", emoji:"📈", title:"Calculadora de juros", desc:"Juros simples e compostos"},
+  {id:"curriculo", emoji:"📄", title:"Gerador de currículo", desc:"Cria um currículo pronto a descarregar"},
+  {id:"carta", emoji:"✉️", title:"Gerador de cartas", desc:"Carta de apresentação personalizada"},
+  {id:"contrato", emoji:"📃", title:"Gerador de contrato simples", desc:"Modelo básico de contrato de prestação de serviços"},
+  {id:"unidades", emoji:"📏", title:"Conversor de unidades", desc:"Comprimento, peso e volume"},
+  {id:"qrcode", emoji:"🔳", title:"Gerador de QR Code", desc:"Cria um QR Code a partir de texto ou link"},
+  {id:"barcode", emoji:"📊", title:"Gerador de código de barras", desc:"Cria um código de barras a partir de números"},
+];
+
+/* ================= NAV / TABS ================= */
+const tabsEl = document.getElementById("tabs");
+CATEGORIES.forEach((c,i)=>{
+  const b = document.createElement("button");
+  b.textContent = c.label;
+  b.dataset.id = c.id;
+  if(i===0) b.classList.add("active");
+  b.onclick = ()=> showView(c.id);
+  tabsEl.appendChild(b);
+});
+
+function showView(id){
+  document.querySelectorAll("section.view").forEach(s=>s.classList.remove("active"));
+  document.getElementById("view-"+id).classList.add("active");
+  document.querySelectorAll("nav.tabs button").forEach(b=>b.classList.toggle("active", b.dataset.id===id));
+  window.scrollTo({top:0, behavior:"smooth"});
+}
+document.getElementById("view-agora").classList.add("active");
+
+/* ================= RENDER CARDS ================= */
+function tagClass(cat){ return {AGORA:"agora", ANGOLA:"angola", DESPORTO:"desporto", TECNOLOGIA:"tecnologia", OPORTUNIDADES:"oportunidades"}[cat] || "agora"; }
+
+function renderAgora(){
+  const hero = agoraStories[0];
+  document.getElementById("agoraHero").innerHTML = `
+    <div class="hero-story">
+      <div class="thumb" style="background:linear-gradient(135deg,#2A2020,#12100F)">${hero.emoji}</div>
+      <div class="body">
+        <span class="tag ${tagClass(hero.tag)}">🔥 ${hero.tag}</span>
+        <h2>${hero.title}</h2>
+        <div class="meta">${hero.meta}</div>
+      </div>
+    </div>`;
+  const grid = document.getElementById("agoraGrid");
+  grid.innerHTML = agoraStories.slice(1).map(s=>`
+    <div class="card">
+      <div class="thumb" style="background:linear-gradient(135deg,#1E2620,#151B17)">${s.emoji}</div>
+      <div class="body">
+        <span class="tag ${tagClass(s.tag)}">🔥 ${s.tag}</span>
+        <h3>${s.title}</h3>
+        <div class="meta">${s.meta}</div>
+      </div>
+    </div>`).join("");
+}
+
+function renderSimple(gridId, items, tagLabel, tagCls){
+  document.getElementById(gridId).innerHTML = items.map(s=>`
+    <div class="card">
+      <div class="thumb" style="background:linear-gradient(135deg,#1E2620,#151B17)">${s.emoji}</div>
+      <div class="body">
+        <span class="tag ${tagCls}">${tagLabel}</span>
+        <h3>${s.title}</h3>
+        <div class="meta">Conteúdo de exemplo</div>
+      </div>
+    </div>`).join("");
+}
+
+function renderTools(){
+  document.getElementById("toolsGrid").innerHTML = tools.map(t=>`
+    <div class="card tool-card" onclick="openTool('${t.id}')">
+      <div class="thumb">${t.emoji}</div>
+      <div class="body">
+        <h3>${t.title}</h3>
+        <div class="meta">${t.desc}</div>
+      </div>
+    </div>`).join("");
+}
+
+renderAgora();
+renderSimple("angolaGrid", angolaStories, "🇦🇴 ANGOLA", "angola");
+renderSimple("desportoGrid", desportoStories, "⚽ DESPORTO", "desporto");
+renderSimple("tecnologiaGrid", tecnologiaStories, "🤖 TECNOLOGIA", "tecnologia");
+renderSimple("oportunidadesGrid", oportunidadesStories, "💰 OPORTUNIDADE", "oportunidades");
+renderTools();
+
+/* ================= NOTÍCIAS REAIS (API) =================
+   Enquanto API_BASE estiver vazio, o site mostra o conteúdo de exemplo acima.
+   Assim que publicares o backend (pasta /backend), põe aqui o URL público dele,
+   ex: "https://viral-angola-api.onrender.com" — o site passa a mostrar notícias reais
+   automaticamente, e volta ao conteúdo de exemplo sozinho se a API estiver em baixo. */
+const API_BASE = "https://viral-angola.onrender.com";
+
+const GRID_POR_CATEGORIA = {
+  angola: {gridId:"angolaGrid", tagLabel:"🇦🇴 ANGOLA", tagCls:"angola"},
+  desporto: {gridId:"desportoGrid", tagLabel:"⚽ DESPORTO", tagCls:"desporto"},
+  tecnologia: {gridId:"tecnologiaGrid", tagLabel:"🤖 TECNOLOGIA", tagCls:"tecnologia"},
+  oportunidades: {gridId:"oportunidadesGrid", tagLabel:"💰 OPORTUNIDADE", tagCls:"oportunidades"},
+};
+
+async function carregarNoticiasReais(){
+  if(!API_BASE) return; // sem backend configurado — mantém o conteúdo de exemplo
+  for(const categoria of Object.keys(GRID_POR_CATEGORIA)){
+    try{
+      const resp = await fetch(`${API_BASE}/api/noticias?categoria=${categoria}`);
+      if(!resp.ok) continue;
+      const dados = await resp.json();
+      if(!dados.noticias || !dados.noticias.length) continue;
+      const {gridId, tagLabel, tagCls} = GRID_POR_CATEGORIA[categoria];
+      document.getElementById(gridId).innerHTML = dados.noticias.slice(0,12).map(n=>`
+        <a class="card" href="${n.link}" target="_blank" rel="noopener" style="text-decoration:none; color:inherit">
+          <div class="thumb" style="background:linear-gradient(135deg,#1E2620,#151B17); font-size:26px">📰</div>
+          <div class="body">
+            <span class="tag ${tagCls}">${tagLabel}</span>
+            <h3>${n.titulo}</h3>
+            <div class="meta">${n.fonte || ""}${n.data ? " · " + new Date(n.data).toLocaleDateString("pt-PT") : ""}</div>
+          </div>
+        </a>`).join("");
+    }catch(e){
+      console.warn(`Não foi possível carregar notícias reais de "${categoria}", a manter conteúdo de exemplo.`, e);
+    }
+  }
+  // AGORA junta as manchetes mais recentes de todas as categorias
+  try{
+    const resp = await fetch(`${API_BASE}/api/noticias/todas`);
+    if(resp.ok){
+      const dados = await resp.json();
+      const todas = Object.values(dados.categorias || {}).flat();
+      todas.sort((a,b)=> new Date(b.data||0) - new Date(a.data||0));
+      if(todas.length){
+        const top = todas.slice(0,7);
+        document.getElementById("tickerTrack").innerHTML =
+          [...top, ...top].map(n=>`<span>${n.titulo}</span>`).join("");
+      }
+    }
+  }catch(e){ /* mantém o ticker de exemplo */ }
+}
+carregarNoticiasReais();
+
+/* ================= OPORTUNIDADES (painel de admin) ================= */
+async function carregarOportunidades(){
+  if(!API_BASE) return;
+  try{
+    const resp = await fetch(`${API_BASE}/api/oportunidades`);
+    if(!resp.ok) return;
+    const dados = await resp.json();
+    if(!dados.oportunidades || !dados.oportunidades.length) return;
+    document.getElementById("oportunidadesGrid").innerHTML = dados.oportunidades.map(o=>`
+      <a class="card" href="${o.link || '#'}" target="_blank" rel="noopener" style="text-decoration:none; color:inherit">
+        <div class="thumb" style="background:linear-gradient(135deg,#1E2620,#151B17)">💰</div>
+        <div class="body">
+          <span class="tag oportunidades">${(o.categoria||"OPORTUNIDADE").toUpperCase()}</span>
+          <h3>${o.titulo}</h3>
+          <div class="meta">${o.instituicao || ""}${o.prazo ? " · prazo: " + o.prazo : ""}</div>
+        </div>
+      </a>`).join("");
+  }catch(e){ /* mantém o conteúdo de exemplo */ }
+}
+carregarOportunidades();
+
+/* ================= PWA: instalação + service worker ================= */
+let deferredPrompt = null;
+window.addEventListener("beforeinstallprompt", (e)=>{
+  e.preventDefault();
+  deferredPrompt = e;
+  document.getElementById("installBtn").style.display = "inline-block";
+});
+function instalarApp(){
+  if(!deferredPrompt) return;
+  deferredPrompt.prompt();
+  deferredPrompt.userChoice.finally(()=>{
+    deferredPrompt = null;
+    document.getElementById("installBtn").style.display = "none";
+  });
+}
+if("serviceWorker" in navigator){
+  window.addEventListener("load", ()=>{
+    navigator.serviceWorker.register("service-worker.js").catch(()=>{});
+  });
+}
+
+/* ================= TICKER ================= */
+document.getElementById("tickerTrack").innerHTML =
+  [...tickerItems, ...tickerItems].map(t=>`<span>${t}</span>`).join("");
+
+/* ================= CLOCK ================= */
+function tickClock(){
+  const now = new Date();
+  document.getElementById("clock").textContent =
+    "Luanda · " + now.toLocaleTimeString("pt-PT",{hour:"2-digit",minute:"2-digit"});
+}
+tickClock(); setInterval(tickClock, 30000);
+
+/* ================= MODAL / TOOLS ================= */
+const overlay = document.getElementById("modalOverlay");
+const modalBox = document.getElementById("modalBox");
+
+function closeModal(){ overlay.classList.remove("open"); modalBox.innerHTML=""; }
+overlay.addEventListener("click", e=>{ if(e.target===overlay) closeModal(); });
+
+function baixarBlob(filename, href){
+  const a = document.createElement("a");
+  a.href = href; a.download = filename;
+  document.body.appendChild(a); a.click(); a.remove();
+}
+async function saveFile(filename, text){
+  const blob = new Blob([text], {type:"text/plain;charset=utf-8"});
+  baixarBlob(filename, URL.createObjectURL(blob));
+}
+async function savePngFromCanvasOrSvg(filename, containerId){
+  const el = document.getElementById(containerId);
+  const canvas = el.querySelector("canvas");
+  if(canvas){ baixarBlob(filename, canvas.toDataURL("image/png")); return; }
+  const svg = el.querySelector("svg");
+  if(svg){
+    const svgData = new XMLSerializer().serializeToString(svg);
+    baixarBlob(filename.replace(".png",".svg"), "data:image/svg+xml," + encodeURIComponent(svgData));
+    return;
+  }
+  alert("Não foi possível guardar a imagem automaticamente. Tira uma captura de ecrã da imagem gerada.");
+}
+
+function openTool(id){
+  modalBox.innerHTML = `<button class="close-x" onclick="closeModal()">✕</button>` + toolTemplates[id]();
+  overlay.classList.add("open");
+  if(toolInit[id]) toolInit[id]();
+}
+
+const toolTemplates = {
+  salario: ()=>`
+    <h2>💵 Calculadora de salário</h2>
+    <label>Salário bruto mensal (Kz)</label>
+    <input type="number" id="salBruto" placeholder="Ex: 150000">
+    <div class="actions"><button class="btn" onclick="calcSalario()">Calcular</button></div>
+    <div class="result-box" id="salResult" style="display:none"></div>
+    <div class="note">Estimativa simplificada (INSS 3% + IRT aproximado por escalões). Consulta a tabela oficial atualizada da AGT para valores exatos.</div>`,
+  percentagem: ()=>`
+    <h2>% Calculadora de percentagem</h2>
+    <label>Modo</label>
+    <select id="pctModo">
+      <option value="de">Quanto é X% de Y</option>
+      <option value="que">X é que percentagem de Y</option>
+      <option value="variacao">Variação percentual de X para Y</option>
+    </select>
+    <div class="row2">
+      <div><label>Valor X</label><input type="number" id="pctX"></div>
+      <div><label>Valor Y</label><input type="number" id="pctY"></div>
+    </div>
+    <div class="actions"><button class="btn" onclick="calcPercentagem()">Calcular</button></div>
+    <div class="result-box" id="pctResult" style="display:none"></div>`,
+  moeda: ()=>`
+    <h2>💱 Conversor Kz / USD / EUR</h2>
+    <div class="note">Taxas de exemplo — ajusta conforme o câmbio atual antes de usar.</div>
+    <div class="row2">
+      <div><label>1 USD em Kz</label><input type="number" id="taxaUsd" value="920"></div>
+      <div><label>1 EUR em Kz</label><input type="number" id="taxaEur" value="990"></div>
+    </div>
+    <label>Valor</label>
+    <div class="row2">
+      <input type="number" id="moedaValor" placeholder="Valor a converter">
+      <select id="moedaDe"><option value="Kz">Kz</option><option value="USD">USD</option><option value="EUR">EUR</option></select>
+    </div>
+    <div class="actions"><button class="btn" onclick="calcMoeda()">Converter</button></div>
+    <div class="result-box" id="moedaResult" style="display:none"></div>`,
+  idade: ()=>`
+    <h2>🎂 Calculadora de idade</h2>
+    <label>Data de nascimento</label>
+    <input type="date" id="idadeData">
+    <div class="actions"><button class="btn" onclick="calcIdade()">Calcular</button></div>
+    <div class="result-box" id="idadeResult" style="display:none"></div>`,
+  juros: ()=>`
+    <h2>📈 Calculadora de juros</h2>
+    <div class="row2">
+      <div><label>Capital (Kz)</label><input type="number" id="jurosCapital"></div>
+      <div><label>Taxa anual (%)</label><input type="number" id="jurosTaxa"></div>
+    </div>
+    <label>Período (anos)</label>
+    <input type="number" id="jurosTempo">
+    <div class="actions"><button class="btn" onclick="calcJuros()">Calcular</button></div>
+    <div class="result-box" id="jurosResult" style="display:none"></div>`,
+  curriculo: ()=>`
+    <h2>📄 Gerador de currículo</h2>
+    <label>Nome completo</label><input id="cvNome">
+    <div class="row2">
+      <div><label>Telefone</label><input id="cvTelefone"></div>
+      <div><label>Email</label><input id="cvEmail"></div>
+    </div>
+    <label>Resumo profissional</label><textarea id="cvResumo"></textarea>
+    <label>Experiência profissional</label><textarea id="cvExperiencia" placeholder="Cargo — Empresa (ano-ano): descrição"></textarea>
+    <label>Formação académica</label><textarea id="cvFormacao"></textarea>
+    <label>Competências (separadas por vírgula)</label><input id="cvCompetencias">
+    <div class="actions">
+      <button class="btn" onclick="gerarCurriculo()">Gerar</button>
+    </div>
+    <div class="result-box" id="cvResult" style="display:none"></div>`,
+  carta: ()=>`
+    <h2>✉️ Gerador de cartas</h2>
+    <label>Tipo de carta</label>
+    <select id="cartaTipo">
+      <option value="apresentacao">Carta de apresentação (emprego)</option>
+      <option value="recomendacao">Carta de recomendação</option>
+      <option value="demissao">Carta de demissão</option>
+    </select>
+    <label>O teu nome</label><input id="cartaNome">
+    <label>Destinatário / Empresa</label><input id="cartaDestino">
+    <label>Detalhes adicionais</label><textarea id="cartaDetalhes" placeholder="Cargo pretendido, motivo, datas, etc."></textarea>
+    <div class="actions"><button class="btn" onclick="gerarCarta()">Gerar</button></div>
+    <div class="result-box" id="cartaResult" style="display:none"></div>`,
+  contrato: ()=>`
+    <h2>📃 Gerador de contrato simples</h2>
+    <div class="note">Modelo genérico para uso informal. Para contratos com valor legal, consulta um advogado.</div>
+    <div class="row2">
+      <div><label>Parte 1 (Contratante)</label><input id="ctrParte1"></div>
+      <div><label>Parte 2 (Contratado)</label><input id="ctrParte2"></div>
+    </div>
+    <label>Objeto do contrato (serviço prestado)</label><textarea id="ctrObjeto"></textarea>
+    <div class="row2">
+      <div><label>Valor (Kz)</label><input type="number" id="ctrValor"></div>
+      <div><label>Prazo</label><input id="ctrPrazo" placeholder="Ex: 30 dias"></div>
+    </div>
+    <div class="actions"><button class="btn" onclick="gerarContrato()">Gerar</button></div>
+    <div class="result-box" id="ctrResult" style="display:none"></div>`,
+  unidades: ()=>`
+    <h2>📏 Conversor de unidades</h2>
+    <label>Categoria</label>
+    <select id="uniCat" onchange="atualizarUnidades()">
+      <option value="comprimento">Comprimento</option>
+      <option value="peso">Peso</option>
+      <option value="volume">Volume</option>
+    </select>
+    <div class="row2">
+      <div><label>De</label><select id="uniDe"></select></div>
+      <div><label>Para</label><select id="uniPara"></select></div>
+    </div>
+    <label>Valor</label><input type="number" id="uniValor">
+    <div class="actions"><button class="btn" onclick="calcUnidades()">Converter</button></div>
+    <div class="result-box" id="uniResult" style="display:none"></div>`,
+  qrcode: ()=>`
+    <h2>🔳 Gerador de QR Code</h2>
+    <label>Texto ou link</label>
+    <input id="qrTexto" placeholder="https://exemplo.com">
+    <div class="actions"><button class="btn" onclick="gerarQR()">Gerar</button></div>
+    <div id="qrOut"></div>
+    <div class="actions" id="qrSaveWrap" style="display:none">
+      <button class="btn secondary" onclick="savePngFromCanvasOrSvg('qrcode.png','qrOut')">Guardar imagem</button>
+    </div>`,
+  barcode: ()=>`
+    <h2>📊 Gerador de código de barras</h2>
+    <label>Números (ex: EAN-13 ou código simples)</label>
+    <input id="barTexto" placeholder="123456789012">
+    <div class="actions"><button class="btn" onclick="gerarBarcode()">Gerar</button></div>
+    <div id="barOut"></div>
+    <div class="actions" id="barSaveWrap" style="display:none">
+      <button class="btn secondary" onclick="savePngFromCanvasOrSvg('codigo-barras.png','barOut')">Guardar imagem</button>
+    </div>`,
+};
+
+const toolInit = { unidades: ()=> atualizarUnidades() };
+
+/* ---- salário ---- */
+function calcSalario(){
+  const bruto = parseFloat(document.getElementById("salBruto").value)||0;
+  const inss = bruto*0.03;
+  const base = bruto - inss;
+  let irt = 0;
+  if(base>70000){
+    const escalões = [
+      [70000,100000,0.10],[100000,150000,0.13],[150000,200000,0.16],
+      [200000,300000,0.18],[300000,500000,0.19],[500000,1000000,0.20],[1000000,Infinity,0.25]
+    ];
+    for(const [min,max,taxa] of escalões){
+      if(base>min){ irt += (Math.min(base,max)-min)*taxa; }
+    }
+  }
+  const liquido = base - irt;
+  document.getElementById("salResult").style.display="block";
+  document.getElementById("salResult").innerHTML =
+    `INSS (3%): <strong>${inss.toFixed(2)} Kz</strong>\nIRT estimado: <strong>${irt.toFixed(2)} Kz</strong>\nSalário líquido estimado: <strong>${liquido.toFixed(2)} Kz</strong>`;
+}
+
+/* ---- percentagem ---- */
+function calcPercentagem(){
+  const modo = document.getElementById("pctModo").value;
+  const x = parseFloat(document.getElementById("pctX").value)||0;
+  const y = parseFloat(document.getElementById("pctY").value)||0;
+  let txt="";
+  if(modo==="de") txt = `${x}% de ${y} = <strong>${(x/100*y).toFixed(2)}</strong>`;
+  if(modo==="que") txt = `${x} é <strong>${(y? (x/y*100).toFixed(2):"—")}%</strong> de ${y}`;
+  if(modo==="variacao") txt = `Variação de ${x} para ${y}: <strong>${(x? ((y-x)/x*100).toFixed(2):"—")}%</strong>`;
+  document.getElementById("pctResult").style.display="block";
+  document.getElementById("pctResult").innerHTML = txt;
+}
+
+/* ---- moeda ---- */
+function calcMoeda(){
+  const usd = parseFloat(document.getElementById("taxaUsd").value)||1;
+  const eur = parseFloat(document.getElementById("taxaEur").value)||1;
+  const valor = parseFloat(document.getElementById("moedaValor").value)||0;
+  const de = document.getElementById("moedaDe").value;
+  let emKz = valor;
+  if(de==="USD") emKz = valor*usd;
+  if(de==="EUR") emKz = valor*eur;
+  const resUsd = emKz/usd, resEur = emKz/eur;
+  document.getElementById("moedaResult").style.display="block";
+  document.getElementById("moedaResult").innerHTML =
+    `${valor} ${de} equivale a:\nKz: <strong>${emKz.toFixed(2)}</strong>\nUSD: <strong>${resUsd.toFixed(2)}</strong>\nEUR: <strong>${resEur.toFixed(2)}</strong>`;
+}
+
+/* ---- idade ---- */
+function calcIdade(){
+  const val = document.getElementById("idadeData").value;
+  if(!val) return;
+  const nasc = new Date(val), hoje = new Date();
+  let anos = hoje.getFullYear()-nasc.getFullYear();
+  let meses = hoje.getMonth()-nasc.getMonth();
+  let dias = hoje.getDate()-nasc.getDate();
+  if(dias<0){ meses--; dias += new Date(hoje.getFullYear(), hoje.getMonth(), 0).getDate(); }
+  if(meses<0){ anos--; meses += 12; }
+  document.getElementById("idadeResult").style.display="block";
+  document.getElementById("idadeResult").innerHTML = `Idade: <strong>${anos} anos, ${meses} meses e ${dias} dias</strong>`;
+}
+
+/* ---- juros ---- */
+function calcJuros(){
+  const c = parseFloat(document.getElementById("jurosCapital").value)||0;
+  const t = (parseFloat(document.getElementById("jurosTaxa").value)||0)/100;
+  const n = parseFloat(document.getElementById("jurosTempo").value)||0;
+  const simples = c*t*n;
+  const composto = c*(Math.pow(1+t,n)-1);
+  document.getElementById("jurosResult").style.display="block";
+  document.getElementById("jurosResult").innerHTML =
+    `Juro simples: <strong>${simples.toFixed(2)} Kz</strong> (total: ${(c+simples).toFixed(2)} Kz)\nJuro composto: <strong>${composto.toFixed(2)} Kz</strong> (total: ${(c+composto).toFixed(2)} Kz)`;
+}
+
+/* ---- currículo ---- */
+function gerarCurriculo(){
+  const nome = document.getElementById("cvNome").value;
+  const tel = document.getElementById("cvTelefone").value;
+  const email = document.getElementById("cvEmail").value;
+  const resumo = document.getElementById("cvResumo").value;
+  const exp = document.getElementById("cvExperiencia").value;
+  const form = document.getElementById("cvFormacao").value;
+  const comp = document.getElementById("cvCompetencias").value;
+  const texto = `${nome}\n${tel} | ${email}\n\nRESUMO PROFISSIONAL\n${resumo}\n\nEXPERIÊNCIA PROFISSIONAL\n${exp}\n\nFORMAÇÃO ACADÉMICA\n${form}\n\nCOMPETÊNCIAS\n${comp}`;
+  const box = document.getElementById("cvResult");
+  box.style.display="block";
+  box.textContent = texto;
+  saveFile((nome||"curriculo").replace(/\s+/g,"_")+".txt", texto);
+}
+
+/* ---- carta ---- */
+function gerarCarta(){
+  const tipo = document.getElementById("cartaTipo").value;
+  const nome = document.getElementById("cartaNome").value;
+  const dest = document.getElementById("cartaDestino").value;
+  const det = document.getElementById("cartaDetalhes").value;
+  const hoje = new Date().toLocaleDateString("pt-PT");
+  let texto="";
+  if(tipo==="apresentacao"){
+    texto = `Luanda, ${hoje}\n\nExmo(a). Responsável de Recursos Humanos, ${dest}\n\nVenho por este meio apresentar a minha candidatura. ${det}\n\nFico ao dispor para uma entrevista.\n\nAtenciosamente,\n${nome}`;
+  } else if(tipo==="recomendacao"){
+    texto = `Luanda, ${hoje}\n\nA quem interessar,\n\nVenho por este meio recomendar ${dest}. ${det}\n\nAtenciosamente,\n${nome}`;
+  } else {
+    texto = `Luanda, ${hoje}\n\nExmo(a). ${dest},\n\nVenho por este meio comunicar a minha demissão do cargo que ocupo. ${det}\n\nAtenciosamente,\n${nome}`;
+  }
+  const box = document.getElementById("cartaResult");
+  box.style.display="block";
+  box.textContent = texto;
+  saveFile("carta.txt", texto);
+}
+
+/* ---- contrato ---- */
+function gerarContrato(){
+  const p1 = document.getElementById("ctrParte1").value;
+  const p2 = document.getElementById("ctrParte2").value;
+  const objeto = document.getElementById("ctrObjeto").value;
+  const valor = document.getElementById("ctrValor").value;
+  const prazo = document.getElementById("ctrPrazo").value;
+  const hoje = new Date().toLocaleDateString("pt-PT");
+  const texto = `CONTRATO DE PRESTAÇÃO DE SERVIÇOS\n\nEntre ${p1} (Contratante) e ${p2} (Contratado), celebra-se o presente contrato nos seguintes termos:\n\n1. OBJETO\n${objeto}\n\n2. VALOR\n${valor} Kz\n\n3. PRAZO\n${prazo}\n\n4. DISPOSIÇÕES GERAIS\nAs partes comprometem-se a cumprir o presente contrato de boa fé.\n\nLuanda, ${hoje}\n\n___________________________\n${p1} (Contratante)\n\n___________________________\n${p2} (Contratado)`;
+  const box = document.getElementById("ctrResult");
+  box.style.display="block";
+  box.textContent = texto;
+  saveFile("contrato.txt", texto);
+}
+
+/* ---- unidades ---- */
+const unidadesMap = {
+  comprimento: {mm:0.001, cm:0.01, m:1, km:1000, pol:0.0254, pe:0.3048, milha:1609.34},
+  peso: {mg:0.000001, g:0.001, kg:1, ton:1000, lb:0.453592, oz:0.0283495},
+  volume: {ml:0.001, l:1, m3:1000, galao:3.78541},
+};
+function atualizarUnidades(){
+  const cat = document.getElementById("uniCat").value;
+  const opts = Object.keys(unidadesMap[cat]).map(u=>`<option value="${u}">${u}</option>`).join("");
+  document.getElementById("uniDe").innerHTML = opts;
+  document.getElementById("uniPara").innerHTML = opts;
+}
+function calcUnidades(){
+  const cat = document.getElementById("uniCat").value;
+  const de = document.getElementById("uniDe").value;
+  const para = document.getElementById("uniPara").value;
+  const valor = parseFloat(document.getElementById("uniValor").value)||0;
+  const base = valor * unidadesMap[cat][de];
+  const resultado = base / unidadesMap[cat][para];
+  document.getElementById("uniResult").style.display="block";
+  document.getElementById("uniResult").innerHTML = `${valor} ${de} = <strong>${resultado.toFixed(4)} ${para}</strong>`;
+}
+
+/* ---- QR code ---- */
+function gerarQR(){
+  const texto = document.getElementById("qrTexto").value || "https://exemplo.com";
+  const out = document.getElementById("qrOut");
+  out.innerHTML = "";
+  new QRCode(out, {text: texto, width:200, height:200});
+  document.getElementById("qrSaveWrap").style.display="flex";
+}
+
+/* ---- Barcode ---- */
+function gerarBarcode(){
+  const texto = document.getElementById("barTexto").value || "123456789012";
+  const out = document.getElementById("barOut");
+  out.innerHTML = '<svg id="barSvg"></svg>';
+  try{
+    JsBarcode("#barSvg", texto, {format:"CODE128", displayValue:true});
+  }catch(e){
+    out.innerHTML = "<div style='color:#c00'>Valor inválido para código de barras.</div>";
+    return;
+  }
+  document.getElementById("barSaveWrap").style.display="flex";
+}
+</script>
+</body>
+</html>

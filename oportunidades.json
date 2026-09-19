@@ -1,0 +1,11 @@
+[
+  {
+    "id": "1",
+    "titulo": "Vaga de emprego — exemplo (edita ou apaga no painel /admin)",
+    "categoria": "emprego",
+    "instituicao": "Empresa exemplo",
+    "prazo": "2026-12-31",
+    "link": "https://exemplo.com",
+    "criado_em": "2026-09-19T00:00:00.000Z"
+  }
+]
