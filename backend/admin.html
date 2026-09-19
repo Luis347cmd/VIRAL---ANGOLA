@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="pt-AO">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Viral Angola — Painel</title>
+<style>
+  body{font-family:system-ui,Arial,sans-serif; max-width:720px; margin:30px auto; padding:0 16px; background:#0B0F0D; color:#F5F1E8}
+  h1{font-size:22px}
+  input,select,textarea,button{font-size:14px; padding:9px 10px; border-radius:6px; border:1px solid #2A332C; background:#1E2620; color:#F5F1E8; width:100%; margin-bottom:10px; box-sizing:border-box}
+  label{font-size:12px; color:#9CA59B; display:block; margin-top:6px}
+  button{background:#E7B23E; color:#0B0F0D; font-weight:700; cursor:pointer; border:none; width:auto; padding:9px 18px}
+  .item{border:1px solid #2A332C; border-radius:8px; padding:12px; margin-bottom:10px; display:flex; justify-content:space-between; align-items:center; gap:10px}
+  .item div{flex:1}
+  .item small{color:#9CA59B}
+  .del{background:#D93A3A; color:#fff; width:auto; padding:6px 12px}
+  #loginBox, #panel{display:none}
+  .row2{display:grid; grid-template-columns:1fr 1fr; gap:10px}
+</style>
+</head>
+<body>
+
+<div id="loginBox">
+  <h1>Viral Angola — Painel</h1>
+  <label>Password de administrador</label>
+  <input type="password" id="pw">
+  <button onclick="entrar()">Entrar</button>
+  <p id="loginErro" style="color:#D93A3A"></p>
+</div>
+
+<div id="panel">
+  <h1>Oportunidades</h1>
+  <div id="lista"></div>
+
+  <h2 style="font-size:16px; margin-top:26px">Adicionar nova</h2>
+  <label>Título</label><input id="fTitulo">
+  <div class="row2">
+    <div><label>Categoria</label>
+      <select id="fCategoria">
+        <option value="emprego">Emprego</option>
+        <option value="bolsa">Bolsa de estudo</option>
+        <option value="curso">Curso gratuito</option>
+        <option value="concurso">Concurso público</option>
+        <option value="empreendedorismo">Empreendedorismo</option>
+      </select>
+    </div>
+    <div><label>Instituição/Empresa</label><input id="fInstituicao"></div>
+  </div>
+  <div class="row2">
+    <div><label>Prazo (data limite)</label><input type="date" id="fPrazo"></div>
+    <div><label>Link para mais info</label><input id="fLink" placeholder="https://..."></div>
+  </div>
+  <button onclick="adicionar()">Adicionar oportunidade</button>
+</div>
+
+<script>
+const API_BASE = ""; // preenchido automaticamente = mesma origem do painel
+let senha = "";
+
+function entrar(){
+  senha = document.getElementById("pw").value;
+  carregar();
+}
+
+async function carregar(){
+  const resp = await fetch(`${API_BASE}/api/admin/oportunidades`, {
+    headers: { "Authorization": "Bearer " + senha }
+  });
+  if(resp.status === 401){
+    document.getElementById("loginErro").textContent = "Password incorreta.";
+    return;
+  }
+  document.getElementById("loginBox").style.display = "none";
+  document.getElementById("panel").style.display = "block";
+  const dados = await resp.json();
+  render(dados);
+}
+
+function render(itens){
+  document.getElementById("lista").innerHTML = itens.map(o=>`
+    <div class="item">
+      <div>
+        <strong>${o.titulo}</strong><br>
+        <small>${o.categoria} · ${o.instituicao || ""} ${o.prazo ? "· prazo: "+o.prazo : ""}</small>
+      </div>
+      <button class="del" onclick="apagar('${o.id}')">Apagar</button>
+    </div>`).join("") || "<p style='color:#9CA59B'>Ainda não há oportunidades.</p>";
+}
+
+async function adicionar(){
+  const corpo = {
+    titulo: document.getElementById("fTitulo").value,
+    categoria: document.getElementById("fCategoria").value,
+    instituicao: document.getElementById("fInstituicao").value,
+    prazo: document.getElementById("fPrazo").value,
+    link: document.getElementById("fLink").value,
+  };
+  if(!corpo.titulo){ alert("Escreve pelo menos o título."); return; }
+  const resp = await fetch(`${API_BASE}/api/admin/oportunidades`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json", "Authorization": "Bearer " + senha },
+    body: JSON.stringify(corpo)
+  });
+  if(resp.ok){
+    document.getElementById("fTitulo").value = "";
+    document.getElementById("fInstituicao").value = "";
+    document.getElementById("fPrazo").value = "";
+    document.getElementById("fLink").value = "";
+    carregar();
+  } else {
+    alert("Não foi possível adicionar.");
+  }
+}
+
+async function apagar(id){
+  if(!confirm("Apagar esta oportunidade?")) return;
+  await fetch(`${API_BASE}/api/admin/oportunidades/${id}`, {
+    method: "DELETE",
+    headers: { "Authorization": "Bearer " + senha }
+  });
+  carregar();
+}
+
+document.getElementById("loginBox").style.display = "block";
+</script>
+</body>
+</html>

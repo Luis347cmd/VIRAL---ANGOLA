@@ -1,0 +1,19 @@
+{
+  "_comentario": "Cada categoria tem uma lista de feeds RSS. Os feeds do Google News abaixo funcionam de imediato (pesquisa notícias reais em português sobre o termo indicado, filtradas para Angola). Substitui/acrescenta por feeds diretos de órgãos de comunicação angolanos assim que tiveres os URLs RSS deles (normalmente encontram-se junto de '/rss' no site, ou vendo o código-fonte da página à procura de '<link type=\"application/rss+xml\">').",
+
+  "agora": [
+    "https://news.google.com/rss/search?q=Angola&hl=pt-150&gl=AO&ceid=AO:pt-150"
+  ],
+  "angola": [
+    "https://news.google.com/rss/search?q=Angola+economia+OR+emprego+OR+educa%C3%A7%C3%A3o&hl=pt-150&gl=AO&ceid=AO:pt-150"
+  ],
+  "desporto": [
+    "https://news.google.com/rss/search?q=Girabola+OR+%22Sele%C3%A7%C3%A3o+de+Angola%22+futebol&hl=pt-150&gl=AO&ceid=AO:pt-150"
+  ],
+  "tecnologia": [
+    "https://news.google.com/rss/search?q=intelig%C3%AAncia+artificial+OR+tecnologia+Angola&hl=pt-150&gl=AO&ceid=AO:pt-150"
+  ],
+  "oportunidades": [
+    "https://news.google.com/rss/search?q=vagas+de+emprego+OR+bolsas+de+estudo+Angola&hl=pt-150&gl=AO&ceid=AO:pt-150"
+  ]
+}
